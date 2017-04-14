@@ -10,7 +10,7 @@
 
 
     <style name="AppTheme.Splash">
-        <item name="android:windowBackground"></item>
+        <item name="android:windowBackground">@drawable/rounded_rect_bg</item>
     </style>
 
 </resources>
