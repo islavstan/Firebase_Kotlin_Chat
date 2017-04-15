@@ -6,20 +6,17 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import com.arellomobile.mvp.MvpFacade.init
 import com.google.firebase.auth.FirebaseUser
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.registration.RegisterContract
 import com.islavstan.firebasekotlinchat.core.registration.RegisterPresenter
+import com.pawegio.kandroid.toast
 import kotlinx.android.synthetic.main.fragment_register.*
 
-class RegisterFragment: Fragment(), View.OnClickListener, RegisterContract.View {
+class RegisterFragment: Fragment(), RegisterContract.View {
 
-     var regPresenter: RegisterPresenter? = null
-     var progressDialog: ProgressDialog? = null
-
-
+    var regPresenter: RegisterPresenter? = null
+    var progressDialog: ProgressDialog? = null
 
 
     companion object {
@@ -33,11 +30,10 @@ class RegisterFragment: Fragment(), View.OnClickListener, RegisterContract.View 
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-      val fragmentView = inflater?.inflate(R.layout.fragment_register, container, false)
+        val fragmentView = inflater?.inflate(R.layout.fragment_register, container, false)
         return fragmentView
 
     }
-
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -51,30 +47,31 @@ class RegisterFragment: Fragment(), View.OnClickListener, RegisterContract.View 
         progressDialog?.setTitle("loading...")
         progressDialog?.setMessage("Please wait")
         progressDialog?.isIndeterminate = true
-        registerBtn.setOnClickListener(this)
+        registerBtn.setOnClickListener({ onRegister() })
 
 
     }
 
 
-    override fun onClick(v: View?) {
-        val viewId = v?.id
-        when (viewId) {
-            R.id.registerBtn -> onRegister(v)
+    private fun onRegister() {
+        val email = emailET.text.trim().toString()
+        val password = passwordET.text.trim().toString()
+        if (email == "" || password == "") {
+            this.toast("Fields can not be empty")
+        } else {
+            regPresenter?.register(activity, email, password)
+            progressDialog?.show()
+
         }
-
-    }
-
-    private fun  onRegister(v: View?) {
-
     }
 
     override fun onRegistrationSuccess(firebaseUser: FirebaseUser) {
-
+        this.toast("Registration Successful!")
     }
 
     override fun onRegistrationFailure(message: String) {
-
+        progressDialog?.dismiss()
+        this.toast("Registration failed!+\n" + message)
     }
 
 

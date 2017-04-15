@@ -36,7 +36,7 @@
             android:text="login" />
 
         <Button
-            android:id="@+id/register_btn"
+            android:id="@+id/registerBtn"
             style="?attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
