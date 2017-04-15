@@ -9,18 +9,13 @@ import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.utils.TAG
 
 class SplashActivity : AppCompatActivity() {
-
-
-    private val SPLASH_TIME: Int = 2000;
-    private var mHandler: Handler? = null
-    private var mRunnable: Runnable? = null
+    private val SPLASH_TIME: Long = 2000;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
-        mHandler = Handler()
-        mRunnable = Runnable {
+        val mHandler = Handler()
+        val mRunnable = Runnable {
             Log.d(TAG, "Runnable")
             if (FirebaseAuth.getInstance().currentUser != null) {
                 UserListingActivity.startActivity(this)
@@ -31,5 +26,7 @@ class SplashActivity : AppCompatActivity() {
             }
             finish()
         }
+
+        mHandler.postDelayed(mRunnable, SPLASH_TIME)
     }
 }

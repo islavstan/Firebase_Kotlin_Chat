@@ -6,14 +6,14 @@
     android:padding="24dp">
 
     <EditText
-        android:id="@+id/edit_text_email_id"
+        android:id="@+id/emailET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/passwordET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
@@ -29,7 +29,7 @@
 
 
         <Button
-            android:id="@+id/register_btn"
+            android:id="@+id/registerBtn"
             style="?attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
