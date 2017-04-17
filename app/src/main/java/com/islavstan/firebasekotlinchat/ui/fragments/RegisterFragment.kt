@@ -10,12 +10,20 @@ import com.google.firebase.auth.FirebaseUser
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.registration.RegisterContract
 import com.islavstan.firebasekotlinchat.core.registration.RegisterPresenter
+import com.islavstan.firebasekotlinchat.core.users.add.AddUserContract
+import com.islavstan.firebasekotlinchat.core.users.add.AddUserPresenter
 import com.pawegio.kandroid.toast
 import kotlinx.android.synthetic.main.fragment_register.*
+import android.content.Intent
+import com.islavstan.firebasekotlinchat.ui.activities.UserListingActivity
 
-class RegisterFragment: Fragment(), RegisterContract.View {
+
+
+class RegisterFragment: Fragment(), RegisterContract.View, AddUserContract.View {
+
 
     var regPresenter: RegisterPresenter? = null
+    var addUserPresenter: AddUserPresenter? = null
     var progressDialog: ProgressDialog? = null
 
 
@@ -43,6 +51,7 @@ class RegisterFragment: Fragment(), RegisterContract.View {
 
     private fun initItems() {
         regPresenter = RegisterPresenter(this)
+        addUserPresenter = AddUserPresenter(this)
         progressDialog = ProgressDialog(activity)
         progressDialog?.setTitle("loading...")
         progressDialog?.setMessage("Please wait")
@@ -51,7 +60,6 @@ class RegisterFragment: Fragment(), RegisterContract.View {
 
 
     }
-
 
     private fun onRegister() {
         val email = emailET.text.trim().toString()
@@ -66,12 +74,28 @@ class RegisterFragment: Fragment(), RegisterContract.View {
     }
 
     override fun onRegistrationSuccess(firebaseUser: FirebaseUser) {
+        progressDialog?.setMessage("Add user to db")
         this.toast("Registration Successful!")
+        addUserPresenter?.addUser(activity, firebaseUser)
     }
 
     override fun onRegistrationFailure(message: String) {
         progressDialog?.dismiss()
         this.toast("Registration failed!+\n" + message)
+    }
+
+    override fun onAddUserSuccess(message: String) {
+        progressDialog?.dismiss()
+        this.toast(message)
+        UserListingActivity.startActivity(activity,
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+
+    }
+
+    override fun onAddUserFailure(message: String) {
+        progressDialog?.dismiss()
+        this.toast(message)
     }
 
 
