@@ -29,6 +29,7 @@
             android:inputType="textCapSentences|textMultiLine"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/send_btn"
+            android:layout_toRightOf="@+id/imageBtn"
             android:maxLines="4" />
 
         <ImageButton
@@ -39,6 +40,15 @@
             android:layout_alignParentRight="true"
             android:background="@color/colorPrimary"
             android:src="@drawable/ic_send_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/imageBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+             android:background="@null"
+            android:src="@drawable/attach_file" />
     </RelativeLayout>
 
 </RelativeLayout>

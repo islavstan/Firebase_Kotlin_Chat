@@ -81,7 +81,7 @@ class RegisterFragment: Fragment(), RegisterContract.View, AddUserContract.View 
 
     override fun onRegistrationFailure(message: String) {
         progressDialog?.dismiss()
-        this.toast("Registration failed!+\n" + message)
+        this.toast("Registration failed!+\n$message")
     }
 
     override fun onAddUserSuccess(message: String) {

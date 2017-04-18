@@ -13,4 +13,5 @@ class User {
         this.firebaseToken = firebaseToken
     }
 
+
 }
