@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_chat"
+        android:id="@+id/chatRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/message_block"
@@ -19,7 +19,7 @@
         android:background="#E0E0E0">
 
         <EditText
-            android:id="@+id/edit_text_message"
+            android:id="@+id/messageET"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
@@ -28,12 +28,12 @@
             android:background="@android:color/transparent"
             android:inputType="textCapSentences|textMultiLine"
             android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/send_btn"
+            android:layout_toLeftOf="@+id/sendBtn"
             android:layout_toRightOf="@+id/imageBtn"
             android:maxLines="4" />
 
         <ImageButton
-            android:id="@+id/send_btn"
+            android:id="@+id/sendBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"

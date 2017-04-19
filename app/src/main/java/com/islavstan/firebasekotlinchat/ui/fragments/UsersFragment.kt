@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.users.get_all.GetUsersContract
 import com.islavstan.firebasekotlinchat.core.users.get_all.GetUsersPresenter
+import com.islavstan.firebasekotlinchat.models.Chat
 import com.islavstan.firebasekotlinchat.models.User
 import com.islavstan.firebasekotlinchat.ui.activities.ChatActivity
 import com.islavstan.firebasekotlinchat.ui.adapters.UsersRecyclerAdapter
@@ -21,6 +22,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
 
     lateinit var presenter: GetUsersPresenter
+
 
 
     companion object {

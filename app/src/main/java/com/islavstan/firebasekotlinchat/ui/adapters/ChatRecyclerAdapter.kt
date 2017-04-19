@@ -1,6 +1,7 @@
 package com.islavstan.firebasekotlinchat.ui.adapters
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.TextView
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.models.Chat
 import com.islavstan.firebasekotlinchat.models.User
+import com.islavstan.firebasekotlinchat.utils.TAG
 import java.util.*
 
 
@@ -26,36 +28,42 @@ class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (messages[position].mesType) {
+        if(messages[position].mesType == 1)
+            return VIEW_TYPE_ME
+        else return VIEW_TYPE_OTHER
+
+
+    /*    when (messages[position].mesType) {
             1 -> VIEW_TYPE_ME
             2 -> VIEW_TYPE_OTHER
         }
-        return 0
+        return 0*/
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val chat = messages[position]
+        Log.d(TAG, chat.message+" "+ chat.mesType)
         val mesType = chat.mesType
+        holder?.message?.text = chat.message
 
-        when (mesType) {
-            1 -> holder?.message?.text = chat.message
-            2 -> holder?.message?.text = chat.message
-        }
+
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        if (viewType == 1) {
+        if (viewType == VIEW_TYPE_ME) {
             return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.item_chat_mine, parent, false), viewType)
         } else return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.item_chat_other, parent, false), viewType)
     }
 
 
     class ViewHolder(itemView: View, viewType: Int) : RecyclerView.ViewHolder(itemView) {
-        var userPhoto: ImageView? = null
-        var message: TextView? = null
+       // var userPhoto: ImageView? = null
+        //var message: TextView? = null
+       var userPhoto = itemView.findViewById(R.id.user_photo) as ImageView
+       var message = itemView.findViewById(R.id.messageTV) as TextView
 
-        init {
+      /*  init {
             when (viewType) {
                 1 -> {//my message
                     userPhoto = itemView.findViewById(R.id.user_photo) as ImageView
@@ -66,7 +74,7 @@ class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<
                     var message: TextView = itemView.findViewById(R.id.messageTV) as TextView
                 }
             }
-        }
+        }*/
 
 
     }
