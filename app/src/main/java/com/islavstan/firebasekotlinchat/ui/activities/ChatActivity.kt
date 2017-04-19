@@ -19,11 +19,12 @@ class ChatActivity : AppCompatActivity() {
     private var toolbar: Toolbar? = null
 
     companion object {
-        fun startActivity(activity: Activity, receiver: String, receiverUid: String, firebaseToken: String) {
+        fun startActivity(activity: Activity, receiver: String, receiverUid: String, firebaseToken: String, flags: Int) {
             var intent = Intent(activity, ChatActivity::class.java)
             intent.putExtra(ARG_RECEIVER, receiver)
             intent.putExtra(ARG_RECEIVER_UID, receiverUid)
             intent.putExtra(ARG_FIREBASE_TOKEN, firebaseToken)
+            intent.flags = flags
             activity.startActivity(intent)
         }
     }

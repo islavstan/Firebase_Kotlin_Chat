@@ -3,6 +3,8 @@ package com.islavstan.firebasekotlinchat.ui.fragments
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,13 +23,19 @@ import com.pawegio.kandroid.toast
 import org.greenrobot.eventbus.EventBus
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_users.*
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import java.util.concurrent.TimeUnit
 
 
 class ChatFragment : Fragment(), ChatContract.View {
+
+
     var progressDialog: ProgressDialog? = null
     var presenter: ChatPresenter? = null
     var chatList = mutableListOf<Chat>()
     lateinit var recAdapter: ChatRecyclerAdapter
+    var send: Boolean = false
 
     companion object {
         fun newInstance(receiver: String, receiverUid: String, token: String): ChatFragment {
@@ -44,13 +52,13 @@ class ChatFragment : Fragment(), ChatContract.View {
 
     override fun onStart() {
         super.onStart()
-       // EventBus.getDefault().register(this)
+        // EventBus.getDefault().register(this)
     }
 
 
     override fun onStop() {
         super.onStop()
-      //  EventBus.getDefault().unregister(this)
+        //  EventBus.getDefault().unregister(this)
     }
 
 
@@ -82,7 +90,46 @@ class ChatFragment : Fragment(), ChatContract.View {
         presenter?.getMessage(FirebaseAuth.getInstance().currentUser?.uid!!,
                 arguments.getString(ARG_RECEIVER_UID))
 
+        presenter?.setTypingStatus(FirebaseAuth.getInstance().currentUser?.uid!!,
+                arguments.getString(ARG_RECEIVER_UID))
 
+
+
+
+        Observable.create(Observable.OnSubscribe<String> { subscriber ->
+            messageET.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) = Unit
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    subscriber.onNext(s.toString())
+                    if (!send) {
+                        presenter?.changeTypingStatus(FirebaseAuth.getInstance().currentUser?.uid!!,
+                                arguments.getString(ARG_RECEIVER_UID), true)
+                        send = true
+
+                    }
+                }
+
+            })
+        }).debounce(1000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    text ->
+                    presenter?.changeTypingStatus(FirebaseAuth.getInstance().currentUser?.uid!!,
+                            arguments.getString(ARG_RECEIVER_UID), false)
+                    send = false
+
+
+                })
+
+    }
+
+    override fun setTypingStatus(status: Boolean) {
+        if (status) {
+            typingStatus.visibility = View.VISIBLE
+        } else typingStatus.visibility = View.GONE
     }
 
     private fun sendMessage() {
@@ -100,7 +147,7 @@ class ChatFragment : Fragment(), ChatContract.View {
 
 
     override fun onSendMessageSuccess() {
-        Log.d(TAG, "onSendMessageSuccess" )
+        Log.d(TAG, "onSendMessageSuccess")
         messageET.setText("")
 
     }
@@ -112,7 +159,7 @@ class ChatFragment : Fragment(), ChatContract.View {
     override fun onGetMessageSuccess(chat: Chat) {
         if (chat.senderUid != FirebaseAuth.getInstance().currentUser?.uid) {
             chat.mesType = 2
-            Log.d(TAG, "chat mestype "+chat.mesType)
+            Log.d(TAG, "chat mestype " + chat.mesType)
         }
         recAdapter.addChat(chat)
         chatRecycler.smoothScrollToPosition(recAdapter.getItemCount() - 1);

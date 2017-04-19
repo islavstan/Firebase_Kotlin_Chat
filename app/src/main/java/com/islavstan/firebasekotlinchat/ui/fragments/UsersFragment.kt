@@ -1,5 +1,6 @@
 package com.islavstan.firebasekotlinchat.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
@@ -22,7 +23,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
 
     lateinit var presenter: GetUsersPresenter
-
+    var swipeRefreshLayout: SwipeRefreshLayout?= null
 
 
     companion object {
@@ -39,6 +40,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater?.inflate(R.layout.fragment_users, container, false)
+        swipeRefreshLayout = fragmentView?.findViewById(R.id.swipeRefreshLayout) as SwipeRefreshLayout
         return fragmentView
 
     }
@@ -51,13 +53,13 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
     private fun initItems() {
         presenter = GetUsersPresenter(this)
         presenter.getAllUsersFromFirebase()
-        swipeRefreshLayout.post { swipeRefreshLayout.isRefreshing = true }
-        swipeRefreshLayout.setOnRefreshListener(this)
+        swipeRefreshLayout?.setOnRefreshListener(this)
+       swipeRefreshLayout?.post { swipeRefreshLayout?.isRefreshing = true }
     }
 
 
     override fun openChat(email: String, uid: String, token: String) {
-        ChatActivity.startActivity(activity, email, uid, token)
+        ChatActivity.startActivity(activity, email, uid, token, Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
 
@@ -67,7 +69,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
 
     override fun onGetAllUsersSuccess(users: List<User>) {
-        swipeRefreshLayout.post { swipeRefreshLayout.isRefreshing = false }
+        swipeRefreshLayout?.post { swipeRefreshLayout?.isRefreshing = false }
         val recAdapter = UsersRecyclerAdapter(users, this)
         recycler.adapter = recAdapter
         recAdapter.notifyDataSetChanged()
@@ -76,7 +78,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
     }
 
     override fun onGetAllUsersFailure(message: String) {
-        swipeRefreshLayout.post { swipeRefreshLayout.isRefreshing = false }
+        swipeRefreshLayout?.post { swipeRefreshLayout?.isRefreshing = false }
         toast("Error " + message)
     }
 

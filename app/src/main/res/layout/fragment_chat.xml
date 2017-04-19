@@ -9,7 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/message_block"
+        android:paddingBottom="40dp"
         app:layoutManager="LinearLayoutManager" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/message_block"
+        android:id="@+id/typingStatus"
+        android:textSize="16sp"
+        android:layout_margin="8dp"
+        android:text="typing..."
+        android:visibility="gone"
+        />
+
 
     <RelativeLayout
         android:id="@+id/message_block"
@@ -17,6 +30,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="#E0E0E0">
+
 
         <EditText
             android:id="@+id/messageET"
