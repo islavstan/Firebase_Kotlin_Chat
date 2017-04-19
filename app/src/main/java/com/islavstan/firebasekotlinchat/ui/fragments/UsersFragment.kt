@@ -11,11 +11,14 @@ import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.users.get_all.GetUsersContract
 import com.islavstan.firebasekotlinchat.core.users.get_all.GetUsersPresenter
 import com.islavstan.firebasekotlinchat.models.User
+import com.islavstan.firebasekotlinchat.ui.activities.ChatActivity
 import com.islavstan.firebasekotlinchat.ui.adapters.UsersRecyclerAdapter
+import com.islavstan.firebasekotlinchat.utils.ItemClick
 import com.pawegio.kandroid.toast
 import kotlinx.android.synthetic.main.fragment_users.*
 
-class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRefreshListener {
+class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRefreshListener, ItemClick {
+
 
     lateinit var presenter: GetUsersPresenter
 
@@ -28,6 +31,9 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
             return fragment
         }
     }
+
+
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater?.inflate(R.layout.fragment_users, container, false)
@@ -48,6 +54,11 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
     }
 
 
+    override fun openChat(email: String, uid: String, token: String) {
+        ChatActivity.startActivity(activity, email, uid, token)
+    }
+
+
     override fun onRefresh() {
         presenter.getAllUsersFromFirebase()
     }
@@ -55,7 +66,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
     override fun onGetAllUsersSuccess(users: List<User>) {
         swipeRefreshLayout.post { swipeRefreshLayout.isRefreshing = false }
-        val recAdapter = UsersRecyclerAdapter(users)
+        val recAdapter = UsersRecyclerAdapter(users, this)
         recycler.adapter = recAdapter
         recAdapter.notifyDataSetChanged()
 
