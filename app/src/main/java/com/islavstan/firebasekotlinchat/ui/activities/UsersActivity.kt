@@ -4,18 +4,22 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.afollestad.materialdialogs.MaterialDialog
 import com.islavstan.firebasekotlinchat.R
+import com.islavstan.firebasekotlinchat.bus.SearchUserAction
 import com.islavstan.firebasekotlinchat.core.logout.LogoutContract
 import com.islavstan.firebasekotlinchat.core.logout.LogoutPresenter
 import com.islavstan.firebasekotlinchat.ui.fragments.UsersFragment
 import com.islavstan.firebasekotlinchat.utils.addFragment
+import com.pawegio.kandroid.onQueryChange
 import com.pawegio.kandroid.toast
+import org.greenrobot.eventbus.EventBus
 
-class UserListingActivity : AppCompatActivity(), LogoutContract.View {
+class UsersActivity : AppCompatActivity(), LogoutContract.View {
 
     private var toolbar: Toolbar? = null
     lateinit var presenter: LogoutPresenter
@@ -23,12 +27,12 @@ class UserListingActivity : AppCompatActivity(), LogoutContract.View {
 
     companion object {
         fun startActivity(activity: Activity) {
-            var intent = Intent(activity, UserListingActivity::class.java)
+            val intent = Intent(activity, UsersActivity::class.java)
             activity.startActivity(intent)
         }
 
         fun startActivity(activity: Activity, flags: Int) {
-            var intent = Intent(activity, UserListingActivity::class.java)
+            val intent = Intent(activity, UsersActivity::class.java)
             intent.flags = flags
             activity.startActivity(intent)
         }
@@ -58,10 +62,23 @@ class UserListingActivity : AppCompatActivity(), LogoutContract.View {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_user_listing, menu)
+        initSearchView(menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+    private fun initSearchView(menu: Menu) {
+        var searchViewMenuItem = menu.findItem(R.id.action_search)
+        var searchView = searchViewMenuItem.actionView as SearchView
+        searchView.onQueryChange { query -> EventBus.getDefault().post(SearchUserAction(query)) }
+        searchView.setOnCloseListener { EventBus.getDefault().post(SearchUserAction("")); false }
+
+
+    }
+
+
+
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {

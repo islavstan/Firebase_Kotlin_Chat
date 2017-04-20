@@ -18,7 +18,7 @@ class SplashActivity : AppCompatActivity() {
         val mRunnable = Runnable {
             Log.d(TAG, "Runnable")
             if (FirebaseAuth.getInstance().currentUser != null) {
-                UserListingActivity.startActivity(this)
+                UsersActivity.startActivity(this)
 
             } else {
                 LoginActivity.startActivity(this)

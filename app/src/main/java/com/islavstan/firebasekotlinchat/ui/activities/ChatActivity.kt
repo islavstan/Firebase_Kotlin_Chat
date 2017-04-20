@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.widget.Toolbar
+import android.view.MenuItem
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.ui.fragments.ChatFragment
 import com.islavstan.firebasekotlinchat.ui.fragments.LoginFragment
@@ -19,12 +20,11 @@ class ChatActivity : AppCompatActivity() {
     private var toolbar: Toolbar? = null
 
     companion object {
-        fun startActivity(activity: Activity, receiver: String, receiverUid: String, firebaseToken: String, flags: Int) {
-            var intent = Intent(activity, ChatActivity::class.java)
+        fun startActivity(activity: Activity, receiver: String, receiverUid: String, firebaseToken: String) {
+            val intent = Intent(activity, ChatActivity::class.java)
             intent.putExtra(ARG_RECEIVER, receiver)
             intent.putExtra(ARG_RECEIVER_UID, receiverUid)
             intent.putExtra(ARG_FIREBASE_TOKEN, firebaseToken)
-            intent.flags = flags
             activity.startActivity(intent)
         }
     }
@@ -41,7 +41,8 @@ class ChatActivity : AppCompatActivity() {
 
     private fun initItems() {
         setSupportActionBar(toolbar)
-        toolbar?.title = intent.extras.getString(ARG_RECEIVER)
+        title = intent.extras.getString(ARG_RECEIVER)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         addFragment(supportFragmentManager, R.id.frame_layout_content_chat,
                 ChatFragment.newInstance(intent.extras.getString(ARG_RECEIVER),
@@ -54,5 +55,13 @@ class ChatActivity : AppCompatActivity() {
     private fun bindViews() {
         toolbar = findViewById(R.id.toolbar) as Toolbar
 
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
     }
 }

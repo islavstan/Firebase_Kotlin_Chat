@@ -13,16 +13,14 @@ interface ChatContract {
         fun onSendMessageFailure(message: String)
         fun onGetMessageSuccess(chat: Chat)
         fun onGetMessageFailure(message: String)
-        fun setTypingStatus(status: Boolean)
+        fun getTypingStatus(status: Boolean)
     }
 
     interface Interactor {
         fun sendMessageToFirebaseUser(context: Context, chat: Chat, receiverFirebaseToken: String)
         fun getMessageFromFirebaseUser(senderUid: String, receiverUid: String)
-
         fun setTypingStatus(senderUid: String, receiverUid: String)
         fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean)
-
         fun getTypingStatus(senderUid: String, receiverUid: String)
 
     }

@@ -17,6 +17,8 @@ import java.util.*
 class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<ChatRecyclerAdapter.ViewHolder>() {
     private val VIEW_TYPE_ME = 1
     private val VIEW_TYPE_OTHER = 2
+    private val VIEW_TYPE_MY_IMAGE = 3
+    private val VIEW_TYPE_OTHER_IMAGE = 4
 
     override fun getItemCount(): Int {
         return messages.size
@@ -28,21 +30,15 @@ class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<
     }
 
     override fun getItemViewType(position: Int): Int {
-        if(messages[position].mesType == 1)
-            return VIEW_TYPE_ME
-        else return VIEW_TYPE_OTHER
-
-
-    /*    when (messages[position].mesType) {
-            1 -> VIEW_TYPE_ME
-            2 -> VIEW_TYPE_OTHER
+        when (messages[position].mesType) {
+            1 -> return VIEW_TYPE_ME
+            2 -> return VIEW_TYPE_OTHER
         }
-        return 0*/
+        return 0
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val chat = messages[position]
-        Log.d(TAG, chat.message+" "+ chat.mesType)
         val mesType = chat.mesType
         holder?.message?.text = chat.message
 
@@ -58,24 +54,16 @@ class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<
 
 
     class ViewHolder(itemView: View, viewType: Int) : RecyclerView.ViewHolder(itemView) {
-       // var userPhoto: ImageView? = null
-        //var message: TextView? = null
-       var userPhoto = itemView.findViewById(R.id.user_photo) as ImageView
-       var message = itemView.findViewById(R.id.messageTV) as TextView
+        var userPhoto: ImageView? = null
+        var message: TextView? = null
 
-      /*  init {
-            when (viewType) {
-                1 -> {//my message
-                    userPhoto = itemView.findViewById(R.id.user_photo) as ImageView
-                    message = itemView.findViewById(R.id.messageTV) as TextView
-                }
-                2 -> { // other message
-                    var userPhoto = itemView.findViewById(R.id.user_photo) as ImageView
-                    var message: TextView = itemView.findViewById(R.id.messageTV) as TextView
-                }
+        init {
+            if(viewType == 1 || viewType == 2) {
+                userPhoto = itemView.findViewById(R.id.user_photo) as ImageView
+                message = itemView.findViewById(R.id.messageTV) as TextView
             }
-        }*/
 
+        }
 
     }
 }

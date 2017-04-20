@@ -43,7 +43,7 @@ class ChatPresenter (val view:ChatContract.View) :ChatContract.Presenter, ChatCo
     }
 
     override fun onGetTyping(typing: Boolean) {
-        view.setTypingStatus(typing)
+        view.getTypingStatus(typing)
     }
 
 

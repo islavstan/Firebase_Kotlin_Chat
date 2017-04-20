@@ -11,7 +11,7 @@ import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.login.LoginContract
 import com.islavstan.firebasekotlinchat.core.login.LoginPresenter
 import com.islavstan.firebasekotlinchat.ui.activities.RegisterActivity
-import com.islavstan.firebasekotlinchat.ui.activities.UserListingActivity
+import com.islavstan.firebasekotlinchat.ui.activities.UsersActivity
 import com.islavstan.firebasekotlinchat.utils.TAG
 import com.pawegio.kandroid.toast
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -75,7 +75,7 @@ class LoginFragment : Fragment(), LoginContract.View {
     override fun onLoginSuccess(message: String) {
         progressDialog?.dismiss()
         toast("Logged in successfully")
-        UserListingActivity.startActivity(activity, Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        UsersActivity.startActivity(activity, Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
     override fun onLoginFailure(message: String) {

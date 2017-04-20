@@ -15,7 +15,7 @@ import com.islavstan.firebasekotlinchat.core.users.add.AddUserPresenter
 import com.pawegio.kandroid.toast
 import kotlinx.android.synthetic.main.fragment_register.*
 import android.content.Intent
-import com.islavstan.firebasekotlinchat.ui.activities.UserListingActivity
+import com.islavstan.firebasekotlinchat.ui.activities.UsersActivity
 
 
 
@@ -87,7 +87,7 @@ class RegisterFragment: Fragment(), RegisterContract.View, AddUserContract.View 
     override fun onAddUserSuccess(message: String) {
         progressDialog?.dismiss()
         this.toast(message)
-        UserListingActivity.startActivity(activity,
+        UsersActivity.startActivity(activity,
                 Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
 
 
