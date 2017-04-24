@@ -1,6 +1,7 @@
 package com.islavstan.firebasekotlinchat.core.chat
 
 import android.content.Context
+import android.net.Uri
 import com.islavstan.firebasekotlinchat.models.Chat
 
 
@@ -46,5 +47,8 @@ class ChatPresenter (val view:ChatContract.View) :ChatContract.Presenter, ChatCo
         view.getTypingStatus(typing)
     }
 
+    override fun loadImageToServer(uri: Uri, context: Context, chat: Chat, receiverFirebaseToken: String) {
+       interactor.loadImageToServer(uri, context, chat, receiverFirebaseToken)
+    }
 
 }

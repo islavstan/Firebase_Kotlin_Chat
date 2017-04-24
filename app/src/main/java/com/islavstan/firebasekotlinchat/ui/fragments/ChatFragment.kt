@@ -1,6 +1,9 @@
 package com.islavstan.firebasekotlinchat.ui.fragments
 
+import android.app.Activity.RESULT_OK
 import android.app.ProgressDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
@@ -19,15 +22,14 @@ import com.islavstan.firebasekotlinchat.core.chat.ChatContract
 import com.islavstan.firebasekotlinchat.core.chat.ChatPresenter
 import com.islavstan.firebasekotlinchat.models.Chat
 import com.islavstan.firebasekotlinchat.ui.adapters.ChatRecyclerAdapter
-import com.islavstan.firebasekotlinchat.utils.ARG_FIREBASE_TOKEN
-import com.islavstan.firebasekotlinchat.utils.ARG_RECEIVER
-import com.islavstan.firebasekotlinchat.utils.ARG_RECEIVER_UID
-import com.islavstan.firebasekotlinchat.utils.TAG
+import com.islavstan.firebasekotlinchat.utils.*
 import com.pawegio.kandroid.toast
 import org.greenrobot.eventbus.EventBus
+import id.zelory.compressor.Compressor;
 
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 
@@ -46,6 +48,11 @@ class ChatFragment : Fragment(), ChatContract.View {
     var chatList = mutableListOf<Chat>()
     lateinit var recAdapter: ChatRecyclerAdapter
     var send: Boolean = false
+    private val SELECT_PICTURE = 100
+    var selectedImageUri: Uri? = null
+    var photoFile: File? = null
+    var actualImage: File? = null
+
 
     companion object {
         fun newInstance(receiver: String, receiverUid: String, token: String): ChatFragment {
@@ -102,7 +109,11 @@ class ChatFragment : Fragment(), ChatContract.View {
         progressDialog?.setMessage("Please wait")
         progressDialog?.isIndeterminate = true
         presenter = ChatPresenter(this)
+
         sendBtn?.setOnClickListener({ sendMessage() })
+        imageBtn?.setOnClickListener({openImageChooser()})
+
+
         recAdapter = ChatRecyclerAdapter(chatList)
         chatRecycler?.adapter = recAdapter
         presenter?.getMessage(FirebaseAuth.getInstance().currentUser?.uid!!,
@@ -144,6 +155,14 @@ class ChatFragment : Fragment(), ChatContract.View {
     }
 
 
+    private fun openImageChooser() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE)
+    }
+
+
     override fun getTypingStatus(status: Boolean) {
         if (status) {
             typingStatus?.visibility = View.VISIBLE
@@ -163,6 +182,17 @@ class ChatFragment : Fragment(), ChatContract.View {
 
     }
 
+    private fun sendImage(){
+        progressDialog?.show()
+        val receiver = arguments.getString(ARG_RECEIVER)
+        val receiverUid = arguments.getString(ARG_RECEIVER_UID)
+        val receiverToken = arguments.getString(ARG_FIREBASE_TOKEN)
+        val sender = FirebaseAuth.getInstance().currentUser?.email
+        val senderUid = FirebaseAuth.getInstance().currentUser?.uid
+        val chat = Chat(sender as String, receiver, senderUid as String, receiverUid, System.currentTimeMillis(), 3)
+        presenter?.loadImageToServer(Uri.fromFile(photoFile),activity.applicationContext, chat, receiverToken)
+    }
+
 
     override fun onSendMessageSuccess() {
         Log.d(TAG, "onSendMessageSuccess")
@@ -172,19 +202,42 @@ class ChatFragment : Fragment(), ChatContract.View {
 
     override fun onSendMessageFailure(message: String) {
         toast(message)
+        progressDialog?.dismiss()
     }
 
     override fun onGetMessageSuccess(chat: Chat) {
+        progressDialog?.dismiss()
         if (chat.senderUid != FirebaseAuth.getInstance().currentUser?.uid) {
-            chat.mesType = 2
+            if (chat.mesType == 1) {
+                chat.mesType = 2
+            } else if (chat.mesType == 3) {
+                chat.mesType = 4
+            }
         }
         recAdapter.addChat(chat)
         chatRecycler?.smoothScrollToPosition(recAdapter.getItemCount() - 1);
     }
 
     override fun onGetMessageFailure(message: String) {
+        progressDialog?.dismiss()
         toast(message)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK){
+            if(requestCode == SELECT_PICTURE){
+                selectedImageUri = data?.data
+                actualImage =  File(MarshMallowPermission.getPath(activity, selectedImageUri));
+                photoFile = Compressor.getDefault(activity).compressToFile(actualImage)
+                sendImage()
+
+            }
+        }
+    }
+
+
+
 
 
 }

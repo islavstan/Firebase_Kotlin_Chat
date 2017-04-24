@@ -1,16 +1,28 @@
 package com.islavstan.firebasekotlinchat.core.chat
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import com.islavstan.firebasekotlinchat.models.Chat
 import com.islavstan.firebasekotlinchat.models.TypingInfo
 import com.islavstan.firebasekotlinchat.utils.ARG_CHAT_ROOMS
 import com.islavstan.firebasekotlinchat.utils.TAG
 import com.islavstan.firebasekotlinchat.utils.TYPING_STATUS
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+import com.google.android.gms.tasks.OnSuccessListener
+import android.support.annotation.NonNull
+import com.google.android.gms.tasks.OnFailureListener
+
+
+
+
 
 
 class ChatInteractor : ChatContract.Interactor {
+
 
 
     lateinit var mOnSendMessageListener: ChatContract.OnSendMessageListener
@@ -61,6 +73,30 @@ class ChatInteractor : ChatContract.Interactor {
 
 
     }
+
+
+
+
+    override fun loadImageToServer(uri: Uri, context: Context, chat: Chat, receiverFirebaseToken: String) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val riversRef = storageRef.child("images/" + uri.lastPathSegment)
+        val uploadTask = riversRef.putFile(uri)
+        uploadTask.addOnFailureListener { exception ->
+            Log.d(TAG, "loadImageToServer error = " + exception.message)
+        }.addOnSuccessListener { taskSnapshot ->
+            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+            val downloadUrl = taskSnapshot.downloadUrl
+            Log.d(TAG, "loadImageToServer Success = $downloadUrl")
+            chat.message = downloadUrl.toString()
+            sendMessageToFirebaseUser(context, chat, receiverFirebaseToken)
+        }
+
+    }
+
+
+
+
 
 
     override fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean) {

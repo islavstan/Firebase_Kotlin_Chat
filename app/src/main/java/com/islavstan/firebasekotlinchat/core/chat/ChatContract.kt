@@ -1,6 +1,7 @@
 package com.islavstan.firebasekotlinchat.core.chat
 
 import android.content.Context
+import android.net.Uri
 import com.islavstan.firebasekotlinchat.models.Chat
 
 
@@ -22,6 +23,7 @@ interface ChatContract {
         fun setTypingStatus(senderUid: String, receiverUid: String)
         fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean)
         fun getTypingStatus(senderUid: String, receiverUid: String)
+        fun loadImageToServer(uri:Uri, context: Context, chat: Chat, receiverFirebaseToken: String)
 
     }
 
@@ -30,6 +32,7 @@ interface ChatContract {
         fun getMessage(senderUid: String, receiverUid: String)
         fun setTypingStatus(senderUid: String, receiverUid: String)
         fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean)
+        fun loadImageToServer(uri:Uri, context: Context, chat: Chat, receiverFirebaseToken: String)
     }
 
     interface OnSendMessageListener {
