@@ -4,6 +4,7 @@ buildscript {
     ext.kotlin_version = "1.0.4"
     repositories {
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.1'
@@ -11,6 +12,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath "com.android.databinding:dataBinder:1.0-rc4"
         classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'io.fabric.tools:gradle:1.+'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -24,6 +26,7 @@ allprojects {
         maven { url "https://mvn.arello-mobile.com/" }
         maven { url "https://jitpack.io" }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        maven { url 'https://maven.fabric.io/public' }
     }
 }
 

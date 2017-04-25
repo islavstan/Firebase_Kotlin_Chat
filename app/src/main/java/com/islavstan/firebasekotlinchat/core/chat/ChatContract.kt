@@ -15,6 +15,7 @@ interface ChatContract {
         fun onGetMessageSuccess(chat: Chat)
         fun onGetMessageFailure(message: String)
         fun getTypingStatus(status: Boolean)
+        fun removeMessageSuccess(timestamp:String)
     }
 
     interface Interactor {
@@ -24,6 +25,7 @@ interface ChatContract {
         fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean)
         fun getTypingStatus(senderUid: String, receiverUid: String)
         fun loadImageToServer(uri:Uri, context: Context, chat: Chat, receiverFirebaseToken: String)
+        fun removeMessage(name:String, senderUid: String, receiverUid: String)
 
     }
 
@@ -33,6 +35,7 @@ interface ChatContract {
         fun setTypingStatus(senderUid: String, receiverUid: String)
         fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean)
         fun loadImageToServer(uri:Uri, context: Context, chat: Chat, receiverFirebaseToken: String)
+        fun removeMessage(name:String, senderUid: String, receiverUid: String)
     }
 
     interface OnSendMessageListener {
@@ -43,6 +46,10 @@ interface ChatContract {
     interface OnGetMessagesListener {
         fun onGetMessagesSuccess(chat: Chat)
         fun onGetMessagesFailure(message: String)
+    }
+
+    interface RemoveMessageListener{
+        fun messageRemoved(timestamp:String)
     }
 
     interface OnGetTypingListener {

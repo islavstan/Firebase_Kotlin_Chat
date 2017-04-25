@@ -9,13 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.models.Chat
-import com.islavstan.firebasekotlinchat.models.User
+
+import com.islavstan.firebasekotlinchat.utils.MessageClick
 import com.islavstan.firebasekotlinchat.utils.TAG
 import com.squareup.picasso.Picasso
 import java.util.*
 
 
-class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<ChatRecyclerAdapter.ViewHolder>() {
+class ChatRecyclerAdapter( val messages:MutableList<Chat>, val itemClick: MessageClick):RecyclerView.Adapter<ChatRecyclerAdapter.ViewHolder>() {
     private val VIEW_TYPE_ME = 1
     private val VIEW_TYPE_OTHER = 2
     private val VIEW_TYPE_MY_IMAGE = 3
@@ -28,6 +29,19 @@ class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<
     fun addChat(chat: Chat) {
         messages.add(chat)
         notifyItemInserted(messages.size - 1)
+    }
+
+
+    fun removeMessage(timestamp:String) {
+
+        for (i in messages.indices) {
+            if (messages[i].timestamp.toString() == timestamp) {
+                messages.removeAt(i)
+                notifyItemRemoved(i)
+                return
+            }
+        }
+
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -47,6 +61,11 @@ class ChatRecyclerAdapter( val messages:MutableList<Chat>):RecyclerView.Adapter<
             holder?.message?.text = chat.message
         if (mesType == 3 || mesType == 4)
             Picasso.with(holder?.image?.context).load(chat.message).placeholder(R.drawable.loading).into(holder?.image)
+
+        holder?.itemView?.setOnLongClickListener {
+            itemClick.removeMessage(chat.timestamp.toString())
+            true
+        }
 
     }
 

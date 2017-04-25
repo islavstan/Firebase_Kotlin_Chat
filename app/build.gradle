@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.android.databinding'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -95,7 +97,9 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+        transitive = true;
+    }
 
 
 }

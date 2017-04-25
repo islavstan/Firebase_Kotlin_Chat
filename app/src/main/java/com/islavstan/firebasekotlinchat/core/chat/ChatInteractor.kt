@@ -28,6 +28,7 @@ class ChatInteractor : ChatContract.Interactor {
     lateinit var mOnSendMessageListener: ChatContract.OnSendMessageListener
     lateinit var mOnGetMessagesListener: ChatContract.OnGetMessagesListener
     lateinit var mOnGeTypingListener: ChatContract.OnGetTypingListener
+    lateinit var mRemoveMessageListener: ChatContract.RemoveMessageListener
 
     constructor(mOnSendMessageListener: ChatContract.OnSendMessageListener) {
         this.mOnSendMessageListener = mOnSendMessageListener
@@ -37,12 +38,11 @@ class ChatInteractor : ChatContract.Interactor {
         this.mOnGetMessagesListener = mOnGetMessagesListener
     }
 
-    constructor(mOnSendMessageListener: ChatContract.OnSendMessageListener,
-                mOnGetMessagesListener: ChatContract.OnGetMessagesListener,
-                mOnGeTypingListener: ChatContract.OnGetTypingListener) {
+    constructor(mOnSendMessageListener: ChatContract.OnSendMessageListener, mOnGetMessagesListener: ChatContract.OnGetMessagesListener, mOnGeTypingListener: ChatContract.OnGetTypingListener, mRemoveMessageListener: ChatContract.RemoveMessageListener) {
         this.mOnSendMessageListener = mOnSendMessageListener
         this.mOnGetMessagesListener = mOnGetMessagesListener
         this.mOnGeTypingListener = mOnGeTypingListener
+        this.mRemoveMessageListener = mRemoveMessageListener
     }
 
 
@@ -75,7 +75,31 @@ class ChatInteractor : ChatContract.Interactor {
     }
 
 
+    override fun removeMessage(name: String, senderUid: String, receiverUid: String) {
+        val roomType1 = senderUid + "_" + receiverUid
+        val roomType2 = receiverUid + "_" + senderUid
+        val databaseReference = FirebaseDatabase.getInstance().reference
+        databaseReference.child(ARG_CHAT_ROOMS).ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(databaseError: DatabaseError?) {
+                Log.d(TAG, databaseError?.message)
+            }
 
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.hasChild(roomType1)) {
+                    databaseReference.child(ARG_CHAT_ROOMS).child(roomType1).child("messages").child(name).removeValue()
+                } else if (dataSnapshot.hasChild(roomType2)) {
+                    databaseReference.child(ARG_CHAT_ROOMS).child(roomType2).child("messages").child(name).removeValue()
+                } else {
+                    databaseReference.child(ARG_CHAT_ROOMS).child(roomType1).child("messages").child(name).removeValue()
+
+                }
+
+            }
+
+        })
+
+
+    }
 
     override fun loadImageToServer(uri: Uri, context: Context, chat: Chat, receiverFirebaseToken: String) {
         val storage = FirebaseStorage.getInstance()
@@ -87,7 +111,6 @@ class ChatInteractor : ChatContract.Interactor {
         }.addOnSuccessListener { taskSnapshot ->
             // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
             val downloadUrl = taskSnapshot.downloadUrl
-            Log.d(TAG, "loadImageToServer Success = $downloadUrl")
             chat.message = downloadUrl.toString()
             sendMessageToFirebaseUser(context, chat, receiverFirebaseToken)
         }
@@ -272,7 +295,9 @@ class ChatInteractor : ChatContract.Interactor {
                                 }
 
                                 override fun onChildRemoved(p0: DataSnapshot?) {
-                                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                   Log.d(TAG, "onChildRemoved "+p0?.key)
+                                    mRemoveMessageListener.messageRemoved(p0?.key as String)
+
                                 }
 
                             })
@@ -298,7 +323,8 @@ class ChatInteractor : ChatContract.Interactor {
                                 }
 
                                 override fun onChildRemoved(p0: DataSnapshot?) {
-                                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    Log.d(TAG, "onChildRemoved")
+                                    mRemoveMessageListener.messageRemoved(p0?.key as String)
                                 }
 
                             })

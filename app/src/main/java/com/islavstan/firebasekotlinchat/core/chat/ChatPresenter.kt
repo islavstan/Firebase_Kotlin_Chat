@@ -5,11 +5,11 @@ import android.net.Uri
 import com.islavstan.firebasekotlinchat.models.Chat
 
 
-class ChatPresenter (val view:ChatContract.View) :ChatContract.Presenter, ChatContract.OnSendMessageListener, ChatContract.OnGetMessagesListener, ChatContract.OnGetTypingListener{
+class ChatPresenter (val view:ChatContract.View) :ChatContract.Presenter, ChatContract.OnSendMessageListener, ChatContract.OnGetMessagesListener, ChatContract.OnGetTypingListener, ChatContract.RemoveMessageListener{
 
 
 
-    val interactor = ChatInteractor(this, this, this)
+    val interactor = ChatInteractor(this, this, this, this)
 
 
     override fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean) {
@@ -49,6 +49,13 @@ class ChatPresenter (val view:ChatContract.View) :ChatContract.Presenter, ChatCo
 
     override fun loadImageToServer(uri: Uri, context: Context, chat: Chat, receiverFirebaseToken: String) {
        interactor.loadImageToServer(uri, context, chat, receiverFirebaseToken)
+    }
+    override fun removeMessage(name: String, senderUid: String, receiverUid: String) {
+         interactor.removeMessage(name, senderUid, receiverUid)
+    }
+
+    override fun messageRemoved(timestamp: String) {
+             view.removeMessageSuccess(timestamp)
     }
 
 }

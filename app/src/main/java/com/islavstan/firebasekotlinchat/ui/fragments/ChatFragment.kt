@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.chat.ChatContract
@@ -33,8 +34,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 
-class ChatFragment : Fragment(), ChatContract.View {
-
+class ChatFragment : Fragment(), ChatContract.View, MessageClick {
 
     var progressDialog: ProgressDialog? = null
     var sendBtn: ImageButton? = null
@@ -43,7 +43,7 @@ class ChatFragment : Fragment(), ChatContract.View {
     var typingStatus: TextView? = null
     var chatRecycler: RecyclerView? = null
 
-
+    private var removeMessageDialog: MaterialDialog? = null
     var presenter: ChatPresenter? = null
     var chatList = mutableListOf<Chat>()
     lateinit var recAdapter: ChatRecyclerAdapter
@@ -114,7 +114,7 @@ class ChatFragment : Fragment(), ChatContract.View {
         imageBtn?.setOnClickListener({openImageChooser()})
 
 
-        recAdapter = ChatRecyclerAdapter(chatList)
+        recAdapter = ChatRecyclerAdapter(chatList, this)
         chatRecycler?.adapter = recAdapter
         presenter?.getMessage(FirebaseAuth.getInstance().currentUser?.uid!!,
                 arguments.getString(ARG_RECEIVER_UID))
@@ -194,6 +194,27 @@ class ChatFragment : Fragment(), ChatContract.View {
     }
 
 
+    override fun removeMessage(timeStamp: String) {
+
+        removeMessageDialog = MaterialDialog.Builder(activity)
+                .title("Delete message")
+                .content("Are you sure you want to delete message?")
+                .positiveText("Yes")
+                .negativeText("No")
+                .positiveColorRes(R.color.black)
+                .negativeColorRes(R.color.black)
+                .onPositive { materialDialog, dialogAction ->
+                    val senderUid = FirebaseAuth.getInstance().currentUser?.uid
+                    val receiverUid = arguments.getString(ARG_RECEIVER_UID)
+                    presenter?.removeMessage(timeStamp, senderUid as String, receiverUid)
+                    removeMessageDialog?.dismiss()
+
+                }.onNegative { dialog, which -> removeMessageDialog?.dismiss() }
+                .cancelListener { removeMessageDialog?.dismiss() }
+                .show()
+
+    }
+
     override fun onSendMessageSuccess() {
         Log.d(TAG, "onSendMessageSuccess")
         messageET?.setText("")
@@ -215,8 +236,16 @@ class ChatFragment : Fragment(), ChatContract.View {
             }
         }
         recAdapter.addChat(chat)
-        chatRecycler?.smoothScrollToPosition(recAdapter.getItemCount() - 1);
+        chatRecycler?.smoothScrollToPosition(recAdapter.getItemCount() - 1)
     }
+
+
+
+    override fun removeMessageSuccess(timestamp: String) {
+        recAdapter.removeMessage(timestamp)
+    }
+
+
 
     override fun onGetMessageFailure(message: String) {
         progressDialog?.dismiss()

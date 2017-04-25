@@ -8,12 +8,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.utils.TAG
 
+
+
 class SplashActivity : AppCompatActivity() {
     private val SPLASH_TIME: Long = 2000;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+
         val mHandler = Handler()
         val mRunnable = Runnable {
             Log.d(TAG, "Runnable")

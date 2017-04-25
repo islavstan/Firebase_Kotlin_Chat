@@ -1,7 +1,9 @@
 package com.islavstan.firebasekotlinchat
 
 import android.app.Application
+import com.crashlytics.android.Crashlytics
 import com.squareup.leakcanary.LeakCanary
+import io.fabric.sdk.android.Fabric
 
 
 class FirebaseChatMainApp : Application() {
@@ -15,5 +17,6 @@ class FirebaseChatMainApp : Application() {
         }
         LeakCanary.install(this)
         // Normal app init code...
+        Fabric.with(this, Crashlytics())
     }
 }
