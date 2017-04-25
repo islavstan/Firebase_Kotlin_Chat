@@ -21,12 +21,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.core.chat.ChatContract
 import com.islavstan.firebasekotlinchat.core.chat.ChatPresenter
+import com.islavstan.firebasekotlinchat.events.PushNotificationEvent
 import com.islavstan.firebasekotlinchat.models.Chat
 import com.islavstan.firebasekotlinchat.ui.adapters.ChatRecyclerAdapter
 import com.islavstan.firebasekotlinchat.utils.*
 import com.pawegio.kandroid.toast
 import org.greenrobot.eventbus.EventBus
 import id.zelory.compressor.Compressor;
+import org.greenrobot.eventbus.Subscribe
 
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
@@ -69,13 +71,13 @@ class ChatFragment : Fragment(), ChatContract.View, MessageClick {
 
     override fun onStart() {
         super.onStart()
-        // EventBus.getDefault().register(this)
+         EventBus.getDefault().register(this)
     }
 
 
     override fun onStop() {
         super.onStop()
-        //  EventBus.getDefault().unregister(this)
+          EventBus.getDefault().unregister(this)
     }
 
 
@@ -266,7 +268,13 @@ class ChatFragment : Fragment(), ChatContract.View, MessageClick {
     }
 
 
+    @Subscribe
+     fun onPushNotificationEvent( pushNotificationEvent: PushNotificationEvent) {
+        if (recAdapter == null || recAdapter.itemCount == 0) {
+            presenter?.getMessage(FirebaseAuth.getInstance().currentUser?.getUid()!!,
+                    pushNotificationEvent.uid)
+        }
 
 
-
+    }
 }

@@ -8,6 +8,17 @@ import io.fabric.sdk.android.Fabric
 
 class FirebaseChatMainApp : Application() {
 
+
+    companion object {
+        private var sIsChatActivityOpen = false
+        fun isChatActivityOpen():Boolean {
+            return sIsChatActivityOpen
+        }
+        fun setChatActivityOpen(isChatActivityOpen: Boolean){
+            sIsChatActivityOpen = isChatActivityOpen
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) {

@@ -7,22 +7,16 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.islavstan.firebasekotlinchat.models.Chat
 import com.islavstan.firebasekotlinchat.models.TypingInfo
-import com.islavstan.firebasekotlinchat.utils.ARG_CHAT_ROOMS
-import com.islavstan.firebasekotlinchat.utils.TAG
-import com.islavstan.firebasekotlinchat.utils.TYPING_STATUS
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.android.gms.tasks.OnSuccessListener
 import android.support.annotation.NonNull
 import com.google.android.gms.tasks.OnFailureListener
-
-
-
-
+import com.islavstan.firebasekotlinchat.fcm.FcmNotificationBuilder
+import com.islavstan.firebasekotlinchat.utils.*
 
 
 class ChatInteractor : ChatContract.Interactor {
-
 
 
     lateinit var mOnSendMessageListener: ChatContract.OnSendMessageListener
@@ -116,10 +110,6 @@ class ChatInteractor : ChatContract.Interactor {
         }
 
     }
-
-
-
-
 
 
     override fun changeTypingStatus(senderUid: String, receiverUid: String, status: Boolean) {
@@ -226,6 +216,23 @@ class ChatInteractor : ChatContract.Interactor {
     }
 
 
+    private fun sendPushNotificationToReceiver(username: String,
+                                               message: String,
+                                               uid: String,
+                                               firebaseToken: String,
+                                               receiverFirebaseToken: String) {
+        Log.d(TAG, "sendPushNotificationToReceiver")
+        FcmNotificationBuilder.initialize()
+                .title(username)
+                .message(message)
+                .username(username)
+                .uid(uid)
+                .firebaseToken(firebaseToken)
+                .receiverFirebaseToken(receiverFirebaseToken)
+                .send()
+    }
+
+
     override fun sendMessageToFirebaseUser(context: Context, chat: Chat, receiverFirebaseToken: String) {
         val roomType1 = chat.senderUid + "_" + chat.receiverUid
         val roomType2 = chat.receiverUid + "_" + chat.senderUid
@@ -252,6 +259,13 @@ class ChatInteractor : ChatContract.Interactor {
                     databaseReference.child(ARG_CHAT_ROOMS).child(roomType1).child("messages").child(chat.timestamp.toString()).setValue(chat)
                     getMessageFromFirebaseUser(chat.senderUid, chat.receiverUid)
                 }
+                // send push notification to the receiver
+                sendPushNotificationToReceiver(chat.sender,
+                        chat.message,
+                        chat.senderUid,
+                        SharedPrefUtil(context).getString(ARG_FIREBASE_TOKEN),
+                        receiverFirebaseToken)
+
                 mOnSendMessageListener.onSendMessageSuccess()
             }
         }
@@ -295,7 +309,7 @@ class ChatInteractor : ChatContract.Interactor {
                                 }
 
                                 override fun onChildRemoved(p0: DataSnapshot?) {
-                                   Log.d(TAG, "onChildRemoved "+p0?.key)
+                                    Log.d(TAG, "onChildRemoved " + p0?.key)
                                     mRemoveMessageListener.messageRemoved(p0?.key as String)
 
                                 }
