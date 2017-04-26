@@ -12,12 +12,12 @@ interface GetUsersContract {
     }
 
     interface Presenter {
-        fun getAllUsersFromFirebase()
+        fun getAllUsersFromFirebase(senderUid: String)
         fun getChatUsersFromFirebase()
     }
 
      interface Interactor {
-        fun getAllUsersFromFirebase()
+        fun getAllUsersFromFirebase(senderUid: String)
 
         fun getChatUsersFromFirebase()
     }

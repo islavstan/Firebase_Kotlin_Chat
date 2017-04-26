@@ -6,8 +6,8 @@ import com.islavstan.firebasekotlinchat.models.User
 class GetUsersPresenter (val view:GetUsersContract.View) :GetUsersContract.Presenter, GetUsersContract.OnGetAllUsersListener {
     val interactor: GetUsersInteractor = GetUsersInteractor(this)
 
-    override fun getAllUsersFromFirebase() {
-        interactor.getAllUsersFromFirebase()
+    override fun getAllUsersFromFirebase(senderUid: String) {
+        interactor.getAllUsersFromFirebase(senderUid)
     }
 
     override fun getChatUsersFromFirebase() {

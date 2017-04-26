@@ -249,14 +249,22 @@ class ChatInteractor : ChatContract.Interactor {
                 if (dataSnapshot.hasChild(roomType1)) {
                     Log.d(TAG, "sendMessageToFirebaseUser:$roomType1 exists")
                     databaseReference.child(ARG_CHAT_ROOMS).child(roomType1).child("messages").child(chat.timestamp.toString()).setValue(chat)
+                    databaseReference.child(ARG_USERS).child(chat.senderUid).child("lastMessage").setValue(chat.message)
+                    databaseReference.child(ARG_USERS).child(chat.receiverUid).child("lastMessage").setValue(chat.message)
 
                 } else if (dataSnapshot.hasChild(roomType2)) {
                     Log.d(TAG, "sendMessageToFirebaseUser:$roomType2 exists")
                     databaseReference.child(ARG_CHAT_ROOMS).child(roomType2).child("messages").child(chat.timestamp.toString()).setValue(chat)
+                    databaseReference.child(ARG_USERS).child(chat.senderUid).child("lastMessage").setValue(chat.message)
+                    databaseReference.child(ARG_USERS).child(chat.receiverUid).child("lastMessage").setValue(chat.message)
+
 
                 } else {
                     Log.d(TAG, "sendMessageToFirebaseUser: success")
                     databaseReference.child(ARG_CHAT_ROOMS).child(roomType1).child("messages").child(chat.timestamp.toString()).setValue(chat)
+                    databaseReference.child(ARG_USERS).child(chat.senderUid).child("lastMessage").setValue(chat.message)
+                    databaseReference.child(ARG_USERS).child(chat.receiverUid).child("lastMessage").setValue(chat.message)
+
                     getMessageFromFirebaseUser(chat.senderUid, chat.receiverUid)
                 }
                 // send push notification to the receiver

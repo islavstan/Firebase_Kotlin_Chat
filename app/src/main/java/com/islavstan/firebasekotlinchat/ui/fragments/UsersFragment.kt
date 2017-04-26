@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.auth.FirebaseAuth
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.bus.SearchUserAction
 import com.islavstan.firebasekotlinchat.core.users.get_all.GetUsersContract
@@ -77,7 +78,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
     private fun initItems() {
         presenter = GetUsersPresenter(this)
-        presenter.getAllUsersFromFirebase()
+        presenter.getAllUsersFromFirebase(FirebaseAuth.getInstance().currentUser?.uid as String)
         swipeRefreshLayout?.setOnRefreshListener(this)
         swipeRefreshLayout?.post { swipeRefreshLayout?.isRefreshing = true }
     }
@@ -89,7 +90,7 @@ class UsersFragment : Fragment(), GetUsersContract.View, SwipeRefreshLayout.OnRe
 
 
     override fun onRefresh() {
-        presenter.getAllUsersFromFirebase()
+        presenter.getAllUsersFromFirebase(FirebaseAuth.getInstance().currentUser?.uid as String)
     }
 
 
