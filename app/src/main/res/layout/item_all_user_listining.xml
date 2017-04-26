@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,8 +7,12 @@
     android:clickable="true"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="8dp">
+    >
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:padding="12dp"
+        android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/user_photo"
         android:layout_width="40dp"
@@ -21,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
+        android:id="@+id/block"
         android:layout_toRightOf="@+id/user_photo"
         android:orientation="vertical">
 
@@ -42,4 +47,10 @@
             android:text="last message"
             android:textSize="16sp" />
     </LinearLayout>
-</RelativeLayout>
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        />
+</LinearLayout>

@@ -10,6 +10,7 @@ import com.islavstan.firebasekotlinchat.models.User
 import com.islavstan.firebasekotlinchat.models.Users
 import java.util.*
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.islavstan.firebasekotlinchat.ui.fragments.UsersFragment
 import com.islavstan.firebasekotlinchat.utils.ItemClick
@@ -44,7 +45,7 @@ class UsersRecyclerAdapter(val users:List<User>, val itemClick: ItemClick):Recyc
         var userPhoto: ImageView = itemView.findViewById(R.id.user_photo) as ImageView
         var userEmail: TextView = itemView.findViewById(R.id.user_email) as TextView
         var lastMessage: TextView = itemView.findViewById(R.id.last_message) as TextView
-        var item: RelativeLayout = itemView.findViewById(R.id.item) as RelativeLayout
+        var item: LinearLayout = itemView.findViewById(R.id.item) as LinearLayout
 
     }
 }

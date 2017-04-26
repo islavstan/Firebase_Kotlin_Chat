@@ -101,5 +101,7 @@ dependencies {
         transitive = true;
     }
 
+    compile 'com.yarolegovich:sliding-root-nav:1.0.2'
+
 
 }

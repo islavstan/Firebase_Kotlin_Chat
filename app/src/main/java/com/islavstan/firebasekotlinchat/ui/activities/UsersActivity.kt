@@ -8,7 +8,9 @@ import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.firebase.auth.FirebaseAuth
 import com.islavstan.firebasekotlinchat.R
 import com.islavstan.firebasekotlinchat.bus.SearchUserAction
 import com.islavstan.firebasekotlinchat.core.logout.LogoutContract
@@ -17,6 +19,7 @@ import com.islavstan.firebasekotlinchat.ui.fragments.UsersFragment
 import com.islavstan.firebasekotlinchat.utils.addFragment
 import com.pawegio.kandroid.onQueryChange
 import com.pawegio.kandroid.toast
+import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import org.greenrobot.eventbus.EventBus
 
 class UsersActivity : AppCompatActivity(), LogoutContract.View {
@@ -41,10 +44,17 @@ class UsersActivity : AppCompatActivity(), LogoutContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_listing)
+
+
         bindViews()
         initItems()
+        SlidingRootNavBuilder(this)
+                .withToolbarMenuToggle(toolbar)
+                .withMenuLayout(R.layout.menu_left_drawer)
+                .inject()
 
-
+        val emailTV = findViewById(R.id.email) as TextView
+        emailTV.text = FirebaseAuth.getInstance().currentUser?.email
     }
 
     private fun initItems() {
@@ -76,8 +86,6 @@ class UsersActivity : AppCompatActivity(), LogoutContract.View {
 
 
     }
-
-
 
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
